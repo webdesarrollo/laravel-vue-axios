@@ -1,67 +1,81 @@
-
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
 
 window.Vue = require('vue');
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
-/*
-const app = new Vue({
-    el: '#app'
-});
-*/
-
-Vue.component('common-list',{
-  props:['lists'],
-  template:'<ul class="list-group"><li class="list-group-item" v-for="item in lists">{{ item.title }}</li></ul>',
-});
-
-var urlPosts='https://jsonplaceholder.typicode.com/posts';
-var urlAlbums='https://jsonplaceholder.typicode.com/albums';
-
 var app = new Vue({
-  el: '#main',
+  el: '#crud',
 
-  created: function(){
-    this.getPosts(),
-    this.getAlbums()
+  created:function(){
+    this.getKeeps();
   },
 
-  data: {
-		posts: [],
-    albums:[]
-	},//data
+  data:{
+    keeps:[],
+    newKeep:'',
+    fillKeep: {'id': '', 'keep': ''},//lo que hace es mostar los datos
+    errors:[]
+  },//data
 
-  //metodos
-  methods: {
-    getPosts: function(){
-      axios.get(urlPosts).then(response=>{
-        this.posts = response.data;
-      });
-    },
+  methods:{
 
-    getAlbums:function(){
-      axios.get(urlAlbums).then(response=>{
-        this.albums= response.data;
-      })
-    }
-  },//metodos
+      getKeeps:function(){
+        var urlKeeps='tasks';
+        axios.get(urlKeeps).then(response=>{
+            this.keeps=response.data;
+        });
+      },
 
-  computed:{
-    searchUser:function(){
-      return this.lists.filter((item)=>item.name.includes(this.name));
-    }
-  }
+      deleteKeeps:function(keep){
+        var urlDelete='tasks/'+keep.id;
+        axios.delete(urlDelete).then(response=>{//elimino
+          this.getKeeps();//acualizo
+            var notify = $.notify('<strong>Task eliminada</strong>', {
+              type: 'success',
+            });
+        });
+      },
+
+      createKeep: function() {
+    			var url = 'tasks';
+    			axios.post(url, {
+    				keep: this.newKeep
+    			}).then(response => {
+    				this.getKeeps();
+    				this.newKeep = '';
+    				this.errors = [];
+    				$('#create').modal('hide');
+            var notify = $.notify('<strong>Task creada</strong>', {
+              type: 'success',
+            });
+    			}).catch(error => {
+    				this.errors = 'Corrija para poder crear con éxito'
+    			});
+    		},
+        /*
+          el edit seria, al hacer click en editar se al metodo editKeep
+          y llena con el objeto keep a fillkeep, y muestar el formulario
+        */
+        editKeep: function(keep) {
+    			this.fillKeep.id   = keep.id;
+    			this.fillKeep.keep = keep.keep;
+    			$('#edit').modal('show');
+        },
+
+        updateKeep: function(id) {
+        			var url = 'tasks/' + id;
+        			axios.put(url, this.fillKeep).then(response => {
+        				this.getKeeps();
+        				this.fillKeep = {'id': '', 'keep': ''};
+        				this.errors	  = [];
+        				$('#edit').modal('hide');
+            $('#edit').modal('hide');
+            var notify = $.notify('<strong>Task actualizada</strong>', {
+              type: 'success',
+            });
+          }).catch(error=>{this.errors.response.data});
+        }
+
+
+  }//metodos
 
 });//vueApp

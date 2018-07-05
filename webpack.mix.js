@@ -13,6 +13,7 @@ let mix = require('laravel-mix');
 
 mix.js([
       'resources/assets/js/jquery-3.3.1.slim.min.js',
+      'resources/assets/js/toastr.js',
       'resources/assets/js/popper.min.js',
       'resources/assets/js/bootstrap.min.js',
       'resources/assets/js/all.js',

@@ -29097,17 +29097,54 @@ var app = new Vue({
     keeps: [],
     newKeep: '',
     fillKeep: { 'id': '', 'keep': '' }, //lo que hace es mostar los datos
+    pagination: {
+      total: 0,
+      current_page: 0,
+      per_page: 0,
+      last_page: 0,
+      from: 0,
+      to: 0
+    },
     errors: []
   }, //data
 
+  computed: {
+    isActived: function isActived() {
+      return this.pagination.current_page;
+    },
+    pagesNumber: function pagesNumber() {
+      if (!this.pagination.to) {
+        return [];
+      }
+      var from = this.pagination.current_page - 2;
+      if (from < 1) {
+        from = 1;
+      }
+
+      var to = from + 2 * 2;
+      if (to >= this.pagination.last_page) {
+        to = this.pagination.last_page;
+      }
+
+      var pagesArray = [];
+      while (from <= to) {
+        pagesArray.push(from);
+        from++;
+      }
+
+      return pagesArray;
+    } //pagesNumber
+  },
+
   methods: {
 
-    getKeeps: function getKeeps() {
+    getKeeps: function getKeeps(page) {
       var _this = this;
 
-      var urlKeeps = 'tasks';
+      var urlKeeps = 'tasks?page=' + page;
       axios.get(urlKeeps).then(function (response) {
-        _this.keeps = response.data;
+        _this.keeps = response.data.tasks.data;
+        _this.pagination = response.data.pagination;
       });
     },
 
@@ -29168,6 +29205,11 @@ var app = new Vue({
       }).catch(function (error) {
         _this4.errors.response.data;
       });
+    },
+
+    changePage: function changePage(page) {
+      this.pagination.current_page = page;
+      this.getKeeps(page);
     } //metodos
 
   } }); //vueApp

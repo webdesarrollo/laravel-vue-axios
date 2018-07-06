@@ -15,3 +15,6 @@ Route::get('/users', function(){
 });
 
 Route::resource('tasks', 'TaskController',['except'=>'show','create','edit']);
+
+Route::get('mis-ideas', 'IdeaController@getIdeas');
+Route::post('guardar-idea', 'IdeaController@store');

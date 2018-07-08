@@ -7,5 +7,6 @@ carpeta public ejemplos basicos.
 assets crud basico antes de la paginacion.
 branch con paginacion
 ## Learning
+public/laravel nue 1h pdf/crud -explicacion.pdf
 
 - **[WebDesarrollo](https://github.com/webdesarrollo)**
